@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Text Trendz — every text tool, one fast workspace</title>
+<meta name="description" content="221 free text tools across 20 categories — word &amp; character counters, case converters, cleaners, generators, encoders, social media limit checkers and more. Runs entirely in your browser, nothing is uploaded.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="tt-switchbar">
+  <span class="tt-view-label">View</span>
+  <div class="tt-view-toggle" role="group" aria-label="Homepage layout">
+    <button type="button" data-action="set-layout" data-layout="workbench" aria-pressed="true">Workbench</button>
+    <button type="button" data-action="set-layout" data-layout="broadsheet" aria-pressed="false">Broadsheet</button>
+  </div>
+  <div class="grow"></div>
+  <div class="tt-accent-toggle" role="group" aria-label="Accent color">
+    <button type="button" class="tt-accent-dot vermilion" data-action="set-accent" data-accent="vermilion" aria-pressed="true" title="Vermilion"></button>
+    <button type="button" class="tt-accent-dot cobalt" data-action="set-accent" data-accent="cobalt" aria-pressed="false" title="Cobalt"></button>
+    <button type="button" class="tt-accent-dot moss" data-action="set-accent" data-accent="moss" aria-pressed="false" title="Moss"></button>
+    <button type="button" class="tt-accent-dot ink" data-action="set-accent" data-accent="ink" aria-pressed="false" title="Ink"></button>
+  </div>
+</div>
+
+<!-- =========================================================
+     WORKBENCH — sidebar of categories + live tool workspace
+     ========================================================= -->
+<div id="workbench-root" class="wb-shell card-shell">
+  <header class="wb-header">
+    <a href="#" class="wb-logo" data-action="home">
+      <span class="mark">Tt</span>
+      <span class="name">Text Trendz</span>
+    </a>
+    <div class="wb-search">
+      <div class="wb-search-box">
+        <span class="slash">/</span>
+        <input id="wb-search-input" type="text" placeholder="Find a tool — try &ldquo;count letters&rdquo; or &ldquo;instagram&rdquo;" aria-label="Search tools" autocomplete="off">
+        <span class="kbd">⌘K</span>
+      </div>
+      <div id="wb-search-results" class="wb-results" role="listbox"></div>
+    </div>
+    <nav class="wb-nav">
+      <a href="#wb-index">All tools</a>
+      <a href="#wb-popular">Popular</a>
+      <a href="#wb-privacy">Privacy</a>
+    </nav>
+    <button type="button" class="wb-theme-btn" data-action="toggle-theme">Dark</button>
+  </header>
+
+  <div class="wb-grid">
+    <aside class="wb-sidebar">
+      <div class="wb-eyebrow"><span id="wb-total-tools">221</span> text tools of them</div>
+      <h1 class="wb-h1">Every text tool, one fast workspace.</h1>
+      <p class="wb-sub">Paste your words and everything counts itself. Tidy it, fix the case, check it fits your post — all without leaving this page.</p>
+      <div class="wb-browse-hd">Browse</div>
+      <nav id="wb-catnav"></nav>
+    </aside>
+
+    <main class="wb-main">
+      <div class="wb-toolbar">
+        <span class="label">Workspace</span>
+        <span id="wb-flash" class="flash"></span>
+        <div class="btns">
+          <button type="button" class="btn" data-action="undo" id="wb-undo">Undo</button>
+          <button type="button" class="btn" data-action="sample">Try example</button>
+          <button type="button" class="btn" data-action="clear">Clear</button>
+          <button type="button" class="btn btn-primary" data-action="copy-main" id="wb-copy" style="min-width:74px">Copy</button>
+        </div>
+      </div>
+
+      <div id="wb-tool-header" class="wb-tool-header" hidden></div>
+
+      <textarea id="wb-textarea" class="wb-textarea" aria-label="Your text" spellcheck="false" placeholder="Paste or type anything. A caption, an essay, a list — the numbers update as you go."></textarea>
+
+      <div id="wb-quickbar" class="wb-quickbar"></div>
+
+      <div id="wb-result-bar" class="wb-result-bar" hidden></div>
+      <div id="wb-result-body" class="wb-result-body"></div>
+
+      <div class="wb-statusbar">
+        <span><span id="wb-s-words">0</span> words</span>
+        <span><span id="wb-s-chars">0</span> chars</span>
+        <span><span id="wb-s-sen">0</span> sentences</span>
+        <span><span id="wb-s-read">0 sec</span> read</span>
+        <span class="stayin"><span class="dot"></span>Stays in your browser</span>
+      </div>
+    </main>
+
+    <aside class="wb-aside">
+      <div class="wb-wordcount">
+        <div class="wb-eyebrow">Word count</div>
+        <div id="wb-big-words" class="big">0</div>
+        <div class="sub"><span id="wb-sub-chars">0 characters</span><span id="wb-sub-nos">0 without spaces</span></div>
+      </div>
+      <div id="wb-stat-rows"></div>
+      <div class="wb-aside-note">Reading at 238 wpm, speaking at 150 wpm — typical adult averages, not a promise.</div>
+    </aside>
+  </div>
+
+  <div class="wb-meters">
+    <div class="wb-meters-hd">
+      <h2>Will it fit?</h2>
+      <span class="desc">Your text against each platform&rsquo;s documented limit. X counts links as 23 and emoji as 2, so we do too.</span>
+    </div>
+    <div id="wb-meters-grid" class="wb-meters-grid"></div>
+  </div>
+
+  <div id="wb-popular" class="wb-popular">
+    <div class="wb-popular-hd">
+      <h2>Popular right now</h2>
+      <p>What most people come here for.</p>
+    </div>
+    <div id="wb-popular-grid" class="wb-popular-grid"></div>
+  </div>
+
+  <div id="wb-index" class="wb-index">
+    <div class="wb-index-hd">
+      <h2>All tools</h2>
+      <span id="wb-index-count" class="count">221 tools</span>
+      <div class="wb-index-filter">
+        <input id="wb-index-q" type="text" placeholder="Filter the list" aria-label="Filter tools" autocomplete="off">
+        <button type="button" class="btn-plain mono" id="wb-index-clear" data-action="clear-index-q" style="display:none">CLEAR</button>
+      </div>
+      <span class="wb-index-hint">Click any tool to open it in the workspace.</span>
+    </div>
+    <div id="wb-index-cols" class="wb-index-cols"></div>
+    <p id="wb-index-empty" style="display:none;color:var(--mute)">Nothing matches that. Try a shorter word, like &ldquo;json&rdquo; or &ldquo;case&rdquo;.</p>
+  </div>
+
+  <div id="wb-privacy" class="wb-privacy">
+    <div><h2>Your text stays with you.</h2></div>
+    <div><strong>Nothing is uploaded.</strong> Counting and formatting happen in your browser tab.</div>
+    <div><strong>No account, no key.</strong> Open a tool and start typing. That&rsquo;s the whole setup.</div>
+    <div><strong>Only tool names are remembered</strong> — for your recent list. <button type="button" class="btn-plain" style="text-decoration:underline" data-action="clear-history" id="wb-clear-history">Clear recent tools</button></div>
+  </div>
+
+  <footer class="wb-footer">
+    <div class="brand"><span class="mark">Tt</span><span class="nm">Text Trendz</span></div>
+    <div class="links"><a href="#wb-index">Tools</a><a href="#wb-index">Categories</a><a href="#wb-popular">Popular</a></div>
+    <div class="links"><a href="#">About</a><a href="#wb-privacy">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
+    <span class="tag mono">Made for people who write things.</span>
+  </footer>
+</div>
+
+<!-- =========================================================
+     BROADSHEET — big type, big numbers, tabbed tool groups
+     ========================================================= -->
+<div id="broadsheet-root" class="bs-shell card-shell" hidden>
+  <header class="bs-header">
+    <a href="#" class="bs-logo" data-action="home">Text Trendz<span class="dot">.</span></a>
+    <nav class="bs-nav">
+      <a href="#bs-index">Tools</a><a href="#bs-index">Categories</a><a href="#bs-index">Popular</a><a href="#bs-privacy">Privacy</a>
+    </nav>
+    <div class="bs-search">
+      <input id="bs-search-input" type="text" placeholder="Find a tool…" aria-label="Find a tool" autocomplete="off">
+      <span class="kbd" id="bs-search-hint">⌘K</span>
+    </div>
+    <button type="button" class="bs-theme-btn" data-action="toggle-theme">Dark</button>
+  </header>
+
+  <div class="bs-stripe">
+    <span>Free text tools</span>
+    <span><span id="bs-total-tools">221</span> tools · 20 categories</span>
+    <span>Runs in your browser</span>
+    <span>No sign-up</span>
+  </div>
+
+  <div class="bs-hero">
+    <h1>Every text utility.<br><span class="sub">One fast workspace.</span></h1>
+    <p>Count, clean, change case and check your post fits — right here, as you type. Paste something in and have a go.</p>
+  </div>
+
+  <div class="bs-toolbox">
+    <div class="bs-tabs" role="tablist" id="bs-tabs">
+      <button type="button" class="bs-tab" role="tab" data-mode="count"><span class="num">01</span>Count</button>
+      <button type="button" class="bs-tab" role="tab" data-mode="social"><span class="num">02</span>Social</button>
+      <button type="button" class="bs-tab" role="tab" data-mode="case"><span class="num">03</span>Case</button>
+      <button type="button" class="bs-tab" role="tab" data-mode="clean"><span class="num">04</span>Clean</button>
+      <button type="button" class="bs-tab" role="tab" data-mode="tool" id="bs-tool-tab" hidden><span class="num">05</span><span id="bs-tool-tab-label"></span></button>
+      <div class="bs-tabbar-actions">
+        <span id="bs-flash" class="flash"></span>
+        <button type="button" data-action="undo" id="bs-undo">Undo</button>
+        <button type="button" data-action="sample">Example</button>
+        <button type="button" data-action="clear">Clear</button>
+        <button type="button" class="copy" data-action="copy-main" id="bs-copy">Copy</button>
+      </div>
+    </div>
+    <div class="bs-main-grid">
+      <textarea id="bs-textarea" class="bs-textarea" aria-label="Your text" spellcheck="false" placeholder="Paste or type anything…"></textarea>
+      <div class="bs-panel">
+        <div id="bs-tool-view" hidden>
+          <div id="bs-tool-header" class="bs-tool-header"></div>
+          <div id="bs-result-bar" class="bs-result-bar"></div>
+          <div id="bs-result-body" class="bs-result-body"></div>
+        </div>
+        <div id="bs-count-view">
+          <div class="bs-count">
+            <div class="lbl">Words</div>
+            <div id="bs-big-words" class="big">0</div>
+          </div>
+          <div id="bs-bigstats" class="bs-bigstats"></div>
+        </div>
+        <div id="bs-social-view" hidden>
+          <div class="bs-social-intro">Measured against each platform&rsquo;s documented limit. X counts links as 23 and emoji as 2.</div>
+          <div id="bs-meters-list"></div>
+        </div>
+        <div id="bs-case-view" hidden>
+          <div class="bs-case-intro">Your first line in each case. Click one to apply it to everything.</div>
+          <div id="bs-case-list"></div>
+        </div>
+        <div id="bs-clean-view" hidden>
+          <div class="bs-clean-intro">Pick what to remove. They run top to bottom.</div>
+          <div id="bs-clean-list"></div>
+          <div class="bs-clean-apply">
+            <span id="bs-clean-delta" class="mono">Already clean</span>
+            <button type="button" data-action="apply-clean">Clean it up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bs-status">
+      <span><span id="bs-s-chars">0</span> characters</span>
+      <span><span id="bs-s-lines">0</span> lines</span>
+      <span><span id="bs-s-read">0 sec</span> to read</span>
+      <span class="stayin">Nothing you type leaves this tab.</span>
+    </div>
+  </div>
+
+  <div id="bs-index" class="bs-index">
+    <div class="bs-index-hd">
+      <h2>All tools</h2>
+      <span id="bs-index-count" class="count">221 tools</span>
+      <span class="hint">Click any tool to open it above. Search up top to filter.</span>
+    </div>
+    <div id="bs-index-rows"></div>
+    <p id="bs-index-empty" style="display:none;margin:18px 0 0;font-size:15px;color:var(--mute)">Nothing matches that yet. Try a single word — &ldquo;json&rdquo;, &ldquo;case&rdquo;, &ldquo;emoji&rdquo;.</p>
+  </div>
+
+  <div id="bs-privacy" class="bs-privacy">
+    <h2>Your text stays in your browser.</h2>
+    <p><strong>Nothing is uploaded</strong>Every count and change happens right here on your device.</p>
+    <p><strong>No account needed</strong>No sign-up, no API key, no trial. Just open a tool.</p>
+    <p><strong>We only remember tool names</strong>So your recent tools are easy to find. <button type="button" class="btn-plain" style="text-decoration:underline" data-action="clear-history" id="bs-clear-history">Clear recent tools</button></p>
+  </div>
+
+  <footer class="bs-footer">
+    <span class="brand">Text Trendz<span class="dot">.</span></span>
+    <a href="#bs-index">Tools</a><a href="#bs-index">Categories</a><a href="#bs-index">Popular</a><a href="#">About</a><a href="#bs-privacy">Privacy</a><a href="#">Terms</a><a href="#">Contact</a>
+    <span class="tag">Made for people who write things.</span>
+  </footer>
+</div>
+
+<script src="js/engine.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
